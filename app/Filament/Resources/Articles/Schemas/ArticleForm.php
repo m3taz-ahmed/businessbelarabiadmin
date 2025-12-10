@@ -24,13 +24,17 @@ class ArticleForm
                             ->collection('cover_image')
                             ->image()
                             ->imageEditor()
-                            ->label('Cover Image'),
+                            ->label('Cover Image')
+                            ->preserveFilenames()
+                            ->disablePreview(), // Disable client-side preview to reduce CORS issues
 
                         SpatieMediaLibraryFileUpload::make('main_image')
                             ->collection('main_image')
                             ->image()
                             ->imageEditor()
-                            ->label('Main Image'),
+                            ->label('Main Image')
+                            ->preserveFilenames()
+                            ->disablePreview(), // Disable client-side preview to reduce CORS issues
                     ])
                     ->columns(2),
 

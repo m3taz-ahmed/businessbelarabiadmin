@@ -7,7 +7,7 @@ return [
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
-    | Here you may speci fy the default filesystem disk that should be used
+    | Here you may specify the default filesystem disk that should be used
     | by the framework. The "local" disk, as well as a variety of cloud
     | based disks are available to your application for file storage.
     |
@@ -58,6 +58,10 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
+            // Add CORS configuration for S3
+            'options' => [
+                'ACL' => 'private',
+            ],
         ],
 
     ],
