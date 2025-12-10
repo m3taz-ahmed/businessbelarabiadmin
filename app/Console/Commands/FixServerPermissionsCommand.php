@@ -15,7 +15,7 @@ class FixServerPermissionsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fix-server-permissions';
+    protected $signature = 'app:fix-server-permissions {--assign-users : Assign roles to existing users}';
 
     /**
      * The console command description.
@@ -49,33 +49,59 @@ class FixServerPermissionsCommand extends Command
         
         $this->info('Roles ensured.');
         
-        // Assign super_admin role to Moataz
-        $moataz = Admin::where('email', 'moataz@businessbelarabia.com')->first();
-        if ($moataz) {
-            if (!$moataz->hasRole('super_admin')) {
-                $moataz->assignRole('super_admin');
-                $this->info('Assigned super_admin role to Moataz.');
-            } else {
-                $this->info('Moataz already has super_admin role.');
-            }
-        } else {
-            $this->warn('Moataz user not found.');
-        }
-        
-        // Assign editor role to the other admin
-        $admin = Admin::where('email', 'admin@businessbelarabia.com')->first();
-        if ($admin) {
-            if (!$admin->hasRole('editor')) {
-                $admin->assignRole('editor');
-                $this->info('Assigned editor role to admin.');
-            } else {
-                $this->info('Admin already has editor role.');
-            }
-        } else {
-            $this->warn('Admin user not found.');
+        // Optionally assign roles to users if the flag is provided
+        if ($this->option('assign-users')) {
+            $this->assignRolesToUsers();
         }
         
         $this->info('Server permissions fixed successfully!');
         $this->info('Please clear your cache and try accessing the admin panel again.');
+        
+        // Show existing admins
+        $admins = Admin::all();
+        if ($admins->count() > 0) {
+            $this->info('Existing admins:');
+            foreach ($admins as $admin) {
+                $roles = $admin->roles->pluck('name')->implode(', ');
+                $this->line("- {$admin->name} ({$admin->email}) - Roles: {$roles}");
+            }
+        } else {
+            $this->warn('No admins found in the database.');
+        }
+    }
+    
+    /**
+     * Assign roles to existing users.
+     */
+    protected function assignRolesToUsers()
+    {
+        $this->info('Assigning roles to existing users...');
+        
+        // Get all admins
+        $admins = Admin::all();
+        
+        if ($admins->count() == 0) {
+            $this->warn('No admins found to assign roles to.');
+            return;
+        }
+        
+        // Assign super_admin role to the first admin if no super_admin exists
+        $superAdminExists = Admin::role('super_admin')->exists();
+        
+        if (!$superAdminExists && $admins->count() > 0) {
+            $firstAdmin = $admins->first();
+            if (!$firstAdmin->hasRole('super_admin')) {
+                $firstAdmin->assignRole('super_admin');
+                $this->info("Assigned super_admin role to {$firstAdmin->name} ({$firstAdmin->email}).");
+            }
+        }
+        
+        // Assign editor role to remaining admins
+        foreach ($admins as $admin) {
+            if (!$admin->hasRole('super_admin') && !$admin->hasRole('editor') && !$admin->hasRole('panel_user')) {
+                $admin->assignRole('editor');
+                $this->info("Assigned editor role to {$admin->name} ({$admin->email}).");
+            }
+        }
     }
 }
