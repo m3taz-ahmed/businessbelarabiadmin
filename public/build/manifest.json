@@ -1,0 +1,26 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-4QB3mKQw.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/filament-custom.css": {
+    "file": "assets/filament-custom-CJo7f-rg.css",
+    "src": "resources/css/filament-custom.css",
+    "isEntry": true,
+    "name": "filament-custom",
+    "names": [
+      "filament-custom.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CAiCLEjY.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}

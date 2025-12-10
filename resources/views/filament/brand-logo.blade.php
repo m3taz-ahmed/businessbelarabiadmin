@@ -1,0 +1,1 @@
+<img src="{{ asset('images/logo.png') }}" alt="BusinessBelarabi Logo" style="height: 2.5rem;" />
