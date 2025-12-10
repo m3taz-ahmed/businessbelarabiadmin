@@ -85,9 +85,16 @@ class FixServerPermissionsCommand extends Command
             return;
         }
         
-        // Assign super_admin role to the first admin if no super_admin exists
-        $superAdminExists = Admin::role('super_admin')->exists();
+        // Check if any admin has super_admin role
+        $superAdminExists = false;
+        foreach ($admins as $admin) {
+            if ($admin->hasRole('super_admin')) {
+                $superAdminExists = true;
+                break;
+            }
+        }
         
+        // Assign super_admin role to the first admin if no super_admin exists
         if (!$superAdminExists && $admins->count() > 0) {
             $firstAdmin = $admins->first();
             if (!$firstAdmin->hasRole('super_admin')) {
