@@ -62,7 +62,7 @@ return [
     'temporary_upload_model' => null,
 
     /*
-     * When enabled, Media Library Pro will only process temporary uploads that were uploaded
+     * When enabled, Media L ibrary Pro will only process temporary uploads that were uploaded
      * in the same session. You can opt to disable this for stateless usage of
      * the pro components.
      */
