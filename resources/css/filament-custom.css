@@ -6,7 +6,6 @@
     width: 1.25rem !important;
     height: 1.25rem !important;
 }
-
 .fi-icon.inline-block {
     display: inline-block !important;
 }
@@ -112,22 +111,52 @@
     display: none !important;
 }
 
-/* Hide loading indicators by default */
+/* Hide loading indicators by default - this is the key fix */
 [wire\:loading] {
     display: none !important;
 }
 
-/* Show loading indicators only when explicitly needed */
-[wire\:loading][wire\:loading\.delay\.none] {
-    display: inline-block !important;
+/* More specific rules to ensure loading indicators never appear when not needed */
+[wire\:loading].inline-flex,
+[wire\:loading].inline-block,
+[wire\:loading].block {
+    display: none !important;
 }
 
-/* Ensure loading indicators don't persist */
-.fi-loading-indicator {
-    animation: none !important;
+/* Only show loading indicators during actual form submissions or specific targets */
+[wire\:loading][wire\:target].inline-flex,
+[wire\:loading][wire\:target].inline-block {
+    display: inline-flex !important;
 }
 
 /* Override any persistent loading animations */
+.fi-loading-indicator {
+    display: none !important;
+    animation: none !important;
+}
+
+/* Specific override for button loading indicators */
+.fi-btn [wire\:loading] {
+    display: none !important;
+}
+
+/* Login page specific fixes */
+.filament-login-page [wire\:loading] {
+    display: none !important;
+}
+
+/* Additional rules to ensure loading indicators are properly managed */
+.fi-form > [wire\:loading],
+.fi-table > [wire\:loading],
+.fi-section > [wire\:loading] {
+    display: none !important;
+}
+
+/* Override any problematic compiled CSS rules */
+[wire\:loading][wire\:loading\.delay\.none] {
+    display: none !important;
+}
+
 @keyframes spin {
     to {
         transform: rotate(0deg);

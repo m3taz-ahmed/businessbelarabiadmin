@@ -51,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->resources([
+                // Explicitly register all resources to ensure they appear on server
                 AdminResource::class,
                 ArticleResource::class,
                 AuthorResource::class,
@@ -119,6 +120,75 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.end',
                 fn () => '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">'
+            )
+            // Add Livewire event listeners to handle loading indicator cleanup
+            ->renderHook(
+                'panels::body.end',
+                fn () => <<<'HTML'
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Hide any existing loading indicators on page load
+                        hideAllLoadingIndicators();
+                        
+                        // Set up periodic cleanup
+                        setInterval(hideAllLoadingIndicators, 1000);
+                    });
+                    
+                    document.addEventListener('livewire:init', () => {
+                        // Hide loading indicators when Livewire initializes
+                        hideAllLoadingIndicators();
+                        
+                        // Listen for various Livewire events
+                        Livewire.on('contentChanged', () => {
+                            setTimeout(hideAllLoadingIndicators, 100);
+                        });
+                        
+                        Livewire.on('message.processed', (response, component) => {
+                            setTimeout(hideAllLoadingIndicators, 100);
+                        });
+                        
+                        Livewire.on('message.failed', (response, component) => {
+                            setTimeout(hideAllLoadingIndicators, 100);
+                        });
+                        
+                        // Additional event listeners for form submissions
+                        Livewire.on('submit', () => {
+                            setTimeout(hideAllLoadingIndicators, 500);
+                        });
+                        
+                        Livewire.on('saved', () => {
+                            setTimeout(hideAllLoadingIndicators, 500);
+                        });
+                    });
+                    
+                    // Function to hide all loading indicators
+                    function hideAllLoadingIndicators() {
+                        // Hide all elements with wire:loading attributes
+                        const loaders = document.querySelectorAll('[wire\\:loading]');
+                        loaders.forEach(loader => {
+                            loader.style.display = 'none';
+                        });
+                        
+                        // Specifically target Filament loading indicators
+                        const filamentLoaders = document.querySelectorAll('.fi-loading-indicator');
+                        filamentLoaders.forEach(loader => {
+                            loader.style.display = 'none';
+                        });
+                        
+                        // Target button loading indicators specifically
+                        const buttonLoaders = document.querySelectorAll('.fi-btn [wire\\:loading]');
+                        buttonLoaders.forEach(loader => {
+                            loader.style.display = 'none';
+                        });
+                        
+                        // Force hide any visible loading elements
+                        const visibleLoaders = document.querySelectorAll('[wire\\:loading][style*="display: inline"]');
+                        visibleLoaders.forEach(loader => {
+                            loader.style.display = 'none';
+                        });
+                    }
+                </script>
+                HTML
             );
     }
 }

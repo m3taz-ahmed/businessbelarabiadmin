@@ -240,12 +240,15 @@ return [
     | panel. Enable these options if you're using multiple panels and want
     | Shield to discover entities across all of them.
     |
+    | For server deployments, we enable discovery to ensure all resources
+    | are found even in subdirectories.
+    |
     */
 
     'discovery' => [
-        'discover_all_resources' => false,
-        'discover_all_widgets' => false,
-        'discover_all_pages' => false,
+        'discover_all_resources' => true,
+        'discover_all_widgets' => true,
+        'discover_all_pages' => true,
     ],
 
     /*
