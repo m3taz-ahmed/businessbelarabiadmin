@@ -59,9 +59,9 @@ return [
             'throw' => false,
             'report' => false,
             // Add CORS configuration for S3
-            'options' => [
-                'ACL' => 'private',
-            ],
+            // 'options' => [
+            //     'ACL' => 'private',
+            // ],
         ],
 
     ],
