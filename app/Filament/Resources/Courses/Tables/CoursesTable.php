@@ -43,7 +43,7 @@ class CoursesTable
 
                 TextColumn::make('minutes')
                     ->label('Duration')
-                    ->formatStateUsing(fn ($state) => $state ? "{$state} min" : '-'),
+                    ->formatStateUsing(fn ($state) => gmdate('H:i:s', $state ?? 0)),
 
                 TextColumn::make('category.trans.name')
                     ->badge()

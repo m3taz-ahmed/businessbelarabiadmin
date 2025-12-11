@@ -14,15 +14,12 @@
 .flex {
     display: flex !important;
 }
-
 .items-center {
     align-items: center !important;
 }
-
 .justify-center {
     justify-content: center !important;
 }
-
 .justify-between {
     justify-content: space-between !important;
 }
@@ -38,55 +35,43 @@
 .bg-gradient-to-br {
     background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
 }
-
 .rounded-xl {
     border-radius: 0.75rem !important;
 }
-
 .border {
     border-width: 1px !important;
 }
-
 .p-4 {
     padding: 1rem !important;
 }
-
 .text-2xl {
     font-size: 1.5rem !important;
     line-height: 2rem !important;
 }
-
 .font-bold {
     font-weight: 700 !important;
 }
-
 .text-sm {
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
 }
-
 .ml-4 {
     margin-left: 1rem !important;
 }
-
 .grid {
     display: grid !important;
 }
-
 .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
 }
-
 .gap-4 {
     gap: 1rem !important;
 }
-
 @media (min-width: 640px) {
     .sm\:grid-cols-3 {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
 }
-
 @media (min-width: 768px) {
     .md\:grid-cols-3 {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
@@ -104,61 +89,4 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-}
-
-/* Fix for infinite loading spinners */
-[x-cloak] {
-    display: none !important;
-}
-
-/* Hide loading indicators by default - this is the key fix */
-[wire\:loading] {
-    display: none !important;
-}
-
-/* More specific rules to ensure loading indicators never appear when not needed */
-[wire\:loading].inline-flex,
-[wire\:loading].inline-block,
-[wire\:loading].block {
-    display: none !important;
-}
-
-/* Only show loading indicators during actual form submissions or specific targets */
-[wire\:loading][wire\:target].inline-flex,
-[wire\:loading][wire\:target].inline-block {
-    display: inline-flex !important;
-}
-
-/* Override any persistent loading animations */
-.fi-loading-indicator {
-    display: none !important;
-    animation: none !important;
-}
-
-/* Specific override for button loading indicators */
-.fi-btn [wire\:loading] {
-    display: none !important;
-}
-
-/* Login page specific fixes */
-.filament-login-page [wire\:loading] {
-    display: none !important;
-}
-
-/* Additional rules to ensure loading indicators are properly managed */
-.fi-form > [wire\:loading],
-.fi-table > [wire\:loading],
-.fi-section > [wire\:loading] {
-    display: none !important;
-}
-
-/* Override any problematic compiled CSS rules */
-[wire\:loading][wire\:loading\.delay\.none] {
-    display: none !important;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(0deg);
-    }
 }
