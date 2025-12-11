@@ -25,7 +25,13 @@ class ArticleAudio extends Model
 
     protected function getAudioFileAttribute($value): ?string
     {
-        return $value ? Storage::disk('s3')->url($value) : null;
+        if (!$value) {
+            return null;
+        }
+        
+        /** @var \Illuminate\Contracts\Filesystem\Cloud $disk */
+        $disk = Storage::disk('s3');
+        return $disk->url($value);
     }
 
     public function article()

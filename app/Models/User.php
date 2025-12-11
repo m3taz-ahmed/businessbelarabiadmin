@@ -81,10 +81,14 @@ class User extends Authenticatable
         
         // Use configured disk (public for local, s3 for production)
         try {
-            return Storage::disk(config('filesystems.default'))->url($value);
+            /** @var \Illuminate\Contracts\Filesystem\Cloud $disk */
+            $disk = Storage::disk(config('filesystems.default'));
+            return $disk->url($value);
         } catch (\Exception $e) {
             // Fallback to public disk if S3 is not configured
-            return Storage::disk('public')->url($value);
+            /** @var \Illuminate\Contracts\Filesystem\Cloud $disk */
+            $disk = Storage::disk('public');
+            return $disk->url($value);
         }
     }
 
@@ -112,9 +116,13 @@ class User extends Authenticatable
         }
 
         try {
-            return Storage::disk(config('filesystems.default'))->url($value);
+            /** @var \Illuminate\Contracts\Filesystem\Cloud $disk */
+            $disk = Storage::disk(config('filesystems.default'));
+            return $disk->url($value);
         } catch (\Exception $e) {
-            return Storage::disk('public')->url($value);
+            /** @var \Illuminate\Contracts\Filesystem\Cloud $disk */
+            $disk = Storage::disk('public');
+            return $disk->url($value);
         }
     }
 
