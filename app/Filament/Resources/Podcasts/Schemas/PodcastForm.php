@@ -41,7 +41,6 @@ class PodcastForm
                         TextInput::make('duration')
                             ->numeric()
                             ->label('Duration (minutes)')
-                            ->helperText('Enter duration in minutes (will be stored as seconds)')
                             ->minValue(0)
                             ->step(1)
                             ->beforeStateDehydrated(function (TextInput $component, $state) {
