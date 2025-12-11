@@ -91,18 +91,18 @@ class ArticlesTable
                     ->label('Show in Slider'),
 
                 SelectFilter::make('author_name')
-                    ->relationship('author', 'id')
+                    ->relationship('author', 'id', fn ($query) => $query->with('trans'))
                     ->label('Author')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A'),
 
                 SelectFilter::make('categories')
-                    ->relationship('categories', 'id')
+                    ->relationship('categories', 'id', fn ($query) => $query->with('trans'))
                     ->multiple()
                     ->label('Category')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A'),
 
                 SelectFilter::make('tags')
-                    ->relationship('tags', 'id')
+                    ->relationship('tags', 'id', fn ($query) => $query->with('trans'))
                     ->multiple()
                     ->label('Tags')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A'),

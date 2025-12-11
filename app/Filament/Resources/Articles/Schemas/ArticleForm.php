@@ -51,9 +51,10 @@ class ArticleForm
                 Fieldset::make('Article Information')
                     ->schema([
                         Select::make('author_name')
-                            ->relationship('author', 'id')
+                            ->relationship('author', 'id', fn ($query) => $query->with('trans'))
                             ->searchable()
                             ->preload()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             /** @var \Filament\Forms\Components\Select $select */
                             ->label('Author'),
 
@@ -91,18 +92,20 @@ class ArticleForm
                 Fieldset::make('Categories & Tags')
                     ->schema([
                         Select::make('categories')
-                            ->relationship('categories', 'id')
+                            ->relationship('categories', 'id', fn ($query) => $query->with('trans'))
                             ->multiple()
                             ->preload()
                             ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             /** @var \Filament\Forms\Components\Select $select */
                             ->label('Categories'),
 
                         Select::make('tags')
-                            ->relationship('tags', 'id')
+                            ->relationship('tags', 'id', fn ($query) => $query->with('trans'))
                             ->multiple()
                             ->preload()
                             ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             /** @var \Filament\Forms\Components\Select $select */
                             ->label('Tags'),
                     ])

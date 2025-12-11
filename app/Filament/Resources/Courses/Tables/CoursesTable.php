@@ -33,7 +33,13 @@ class CoursesTable
 
                 TextColumn::make('level')
                     ->badge()
-                    ->label('Level'),
+                    ->label('المستوى')
+                    ->formatStateUsing(fn ($state): string => match ((int) $state) {
+                        1 => 'مبتدئ',
+                        2 => 'متوسط',
+                        3 => 'متقدم',
+                        default => 'غير محدد',
+                    }),
 
                 TextColumn::make('minutes')
                     ->label('Duration')
@@ -65,10 +71,11 @@ class CoursesTable
 
                 SelectFilter::make('level')
                     ->options([
-                        'beginner' => 'Beginner',
-                        'intermediate' => 'Intermediate',
-                        'advanced' => 'Advanced',
-                    ]),
+                        1 => 'مبتدئ',
+                        2 => 'متوسط',
+                        3 => 'متقدم',
+                    ])
+                    ->label('المستوى'),
 
                 SelectFilter::make('category')
                     ->relationship('category', 'id')

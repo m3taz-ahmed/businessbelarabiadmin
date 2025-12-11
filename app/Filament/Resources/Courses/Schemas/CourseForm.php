@@ -28,9 +28,13 @@ class CourseForm
                             ->default(0)
                             ->label('Sort Order'),
 
-                        TextInput::make('level')
-                            ->maxLength(50)
-                            ->label('Level (Beginner/Intermediate/Advanced)'),
+                        Select::make('level')
+                            ->options([
+                                1 => 'مبتدئ',
+                                2 => 'متوسط',
+                                3 => 'متقدم',
+                            ])
+                            ->label('المستوى'),
 
                         TextInput::make('minutes')
                             ->numeric()
@@ -53,9 +57,10 @@ class CourseForm
                 Fieldset::make('Category')
                     ->schema([
                         Select::make('category_id')
-                            ->relationship('category', 'id')
+                            ->relationship('category', 'id', fn ($query) => $query->with('trans'))
                             ->preload()
                             ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             ->label('Category'),
                     ]),
 

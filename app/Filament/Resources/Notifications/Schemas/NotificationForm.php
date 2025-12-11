@@ -38,9 +38,10 @@ class NotificationForm
                 Fieldset::make('Settings')
                     ->schema([
                         Select::make('user_id')
-                            ->relationship('user', 'name')
+                            ->relationship('user', 'name', fn ($query) => $query->orderBy('name'))
                             ->searchable()
                             ->preload()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->name ?? $record->email ?? 'Unknown User')
                             ->label('User'),
 
                         TextInput::make('route')

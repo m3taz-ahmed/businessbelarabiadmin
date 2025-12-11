@@ -59,10 +59,11 @@ class PodcastForm
                 Fieldset::make('Categories')
                     ->schema([
                         Select::make('categories')
-                            ->relationship('categories', 'id')
+                            ->relationship('categories', 'id', fn ($query) => $query->with('trans'))
                             ->multiple()
                             ->preload()
                             ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             ->label('Categories'),
                     ]),
 
