@@ -6,13 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Article extends Model implements HasMedia
+class Article extends Model
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
-
+    use HasFactory, SoftDeletes;
+    
     protected $table = 'articles';
 
     protected $fillable = [
@@ -23,6 +21,8 @@ class Article extends Model implements HasMedia
         'author_name',
         'schedule_publish_date',
         'uuid',
+        'cover_image',
+        'main_image',
     ];
 
     protected $casts = [
@@ -32,30 +32,6 @@ class Article extends Model implements HasMedia
         'sort' => 'integer',
         'schedule_publish_date' => 'datetime',
     ];
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('cover_image')
-            ->useFallbackUrl(asset('images/default-cover.jpg'))
-            ->useFallbackPath(public_path('images/default-cover.jpg'));
-            
-        $this->addMediaCollection('main_image')
-            ->useFallbackUrl(asset('images/default-main.jpg'))
-            ->useFallbackPath(public_path('images/default-main.jpg'));
-    }
-
-    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(200)
-            ->height(200)
-            ->nonQueued();
-            
-        $this->addMediaConversion('preview')
-            ->width(400)
-            ->height(300)
-            ->nonQueued();
-    }
 
     public function scopeNotDeleted($query)
     {

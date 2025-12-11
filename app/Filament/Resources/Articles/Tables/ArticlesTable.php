@@ -13,13 +13,13 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class ArticlesTable
 {
@@ -27,9 +27,7 @@ class ArticlesTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('cover_image')
-                    ->collection('cover_image')
-                    ->conversion('thumb')
+                ImageColumn::make('cover_image')
                     ->label('Cover')
                     ->circular(),
 
@@ -112,9 +110,9 @@ class ArticlesTable
                 Filter::make('publish_date')
                     ->form([
                         DatePicker::make('published_from')
-                            ->label('Published from'),
+                            ->placeholder('Published from'),
                         DatePicker::make('published_until')
-                            ->label('Published until'),
+                            ->placeholder('Published until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -126,14 +124,27 @@ class ArticlesTable
                                 $data['published_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('schedule_publish_date', '<=', $date),
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['published_from'] ?? null) {
+                            $indicators['published_from'] = 'Published from ' . Carbon::parse($data['published_from'])->toFormattedDateString();
+                        }
+
+                        if ($data['published_until'] ?? null) {
+                            $indicators['published_until'] = 'Published until ' . Carbon::parse($data['published_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
 
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')
-                            ->label('Created from'),
+                            ->placeholder('Created from'),
                         DatePicker::make('created_until')
-                            ->label('Created until'),
+                            ->placeholder('Created until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -145,6 +156,19 @@ class ArticlesTable
                                 $data['created_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Created from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->defaultSort('schedule_publish_date', 'desc')
