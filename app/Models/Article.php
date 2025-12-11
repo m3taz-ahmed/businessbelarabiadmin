@@ -21,8 +21,8 @@ class Article extends Model
         'author_name',
         'schedule_publish_date',
         'uuid',
-        'cover_image',
-        'main_image',
+        'coverImage',
+        'mainImage',
         'content', // Added content field
     ];
 
