@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Articles\Schemas;
 
+use App\Filament\Components\SectionBuilder;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -11,13 +12,14 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 
 /**
  * Article form schema configuration.
  *
  * @property Schema $schema
  */
-
 class ArticleForm
 {
     public static function configure(Schema $schema): Schema
@@ -90,6 +92,151 @@ class ArticleForm
                     ])
                     ->columns(3),
 
+                Fieldset::make('Content Sections')
+                    ->columnSpan('full')
+                    ->schema([
+                        Builder::make('content')
+                            ->label('Content Sections')
+                            ->blocks([
+                                Block::make('paragraph_text')
+                                    ->label('Paragraph')
+                                    ->icon('heroicon-m-bars-3-bottom-left')
+                                    ->schema([
+                                        TextInput::make('paragraph_title')
+                                            ->label('Paragraph Title'),
+                                        Textarea::make('paragraph_text')
+                                            ->label('Content')
+                                            ->rows(5),
+                                    ]),
+                                
+                                Block::make('heading')
+                                    ->label('Heading')
+                                    ->icon('heroicon-m-h1')
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->label('Heading Title')
+                                            ->required(),
+                                        Select::make('title_level')
+                                            ->label('Size')
+                                            ->options([
+                                                'small' => 'Small (H4)',
+                                                'medium' => 'Medium (H3)',
+                                                'large' => 'Large (H2)',
+                                            ])
+                                            ->default('medium'),
+                                    ]),
+
+                                Block::make('images')
+                                    ->label('Image Gallery')
+                                    ->icon('heroicon-m-photo')
+                                    ->schema([
+                                        Repeater::make('images')
+                                            ->label('Images')
+                                            ->schema([
+                                                TextInput::make('image')
+                                                    ->label('Image URL')
+                                                    ->url()
+                                                    ->required(),
+                                                TextInput::make('title')
+                                                    ->label('Caption / Title'),
+                                            ])
+                                            ->grid(2)
+                                            ->defaultItems(1),
+                                    ]),
+
+                                Block::make('list')
+                                    ->label('List')
+                                    ->icon('heroicon-m-list-bullet')
+                                    ->schema([
+                                        TextInput::make('list_title')
+                                            ->label('List Title'),
+                                        Select::make('list_type')
+                                            ->label('List Style')
+                                            ->options([
+                                                'dotted' => 'Bullet Points',
+                                                'numbered' => 'Numbered',
+                                            ])
+                                            ->default('dotted'),
+                                        Repeater::make('list_items')
+                                            ->label('Items')
+                                            ->simple(
+                                                TextInput::make('item')->required()
+                                            ),
+                                    ]),
+
+                                Block::make('q_multiple_choice')
+                                    ->label('Multiple Choice Question')
+                                    ->icon('heroicon-m-question-mark-circle')
+                                    ->schema([
+                                        TextInput::make('question')
+                                            ->label('Question')
+                                            ->required(),
+                                        TextInput::make('answer')
+                                            ->label('Correct Answer Label')
+                                            ->required(),
+                                        Repeater::make('multiple_choice')
+                                            ->label('Options')
+                                            ->simple(
+                                                TextInput::make('option')->required()
+                                            ),
+                                    ]),
+
+                                Block::make('q_true_false')
+                                    ->label('True/False Question')
+                                    ->icon('heroicon-m-check-circle')
+                                    ->schema([
+                                        TextInput::make('question_true_false')
+                                            ->label('Question')
+                                            ->required(),
+                                        Select::make('answer_true_false')
+                                            ->label('Correct Answer')
+                                            ->options([
+                                                'true' => 'True',
+                                                'false' => 'False',
+                                            ])
+                                            ->default('true'),
+                                    ]),
+
+                                Block::make('quote')
+                                    ->label('Quote')
+                                    ->icon('heroicon-m-chat-bubble-bottom-center-text')
+                                    ->schema([
+                                        Textarea::make('quote')
+                                            ->label('Quote')
+                                            ->rows(3)
+                                            ->required(),
+                                        TextInput::make('author_name')
+                                            ->label('Author Name'),
+                                        TextInput::make('author_sub_title')
+                                            ->label('Title/Role'),
+                                        TextInput::make('author_image')
+                                            ->label('Author Image URL')
+                                            ->url(),
+                                    ]),
+
+                                Block::make('video')
+                                    ->label('Video')
+                                    ->icon('heroicon-m-video-camera')
+                                    ->schema([
+                                        TextInput::make('video_title')
+                                            ->label('Video Title'),
+                                        TextInput::make('video_file')
+                                            ->label('Video URL')
+                                            ->url()
+                                            ->required(),
+                                        TextInput::make('poster')
+                                            ->label('Poster Image URL')
+                                            ->url(),
+                                        TextInput::make('duration')
+                                            ->label('Duration (Seconds)')
+                                            ->numeric(),
+                                    ]),
+                            ])
+                            ->columnSpan('full')
+                            ->collapsible()
+                            ->cloneable(),
+                    ]),
+
                 Fieldset::make('Categories & Tags')
                     ->schema([
                         Select::make('categories')
@@ -136,6 +283,7 @@ class ArticleForm
                                     ->label('Short Description'),
                             ])
                             ->defaultItems(1)
+                            ->columnSpan('full')
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),

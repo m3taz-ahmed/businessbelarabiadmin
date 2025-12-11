@@ -11,13 +11,13 @@ class ArticleSection extends Model
 
     protected $fillable = [
         'article_id',
-        'title',
+        'section_name',
         'content',
-        'order',
+        'sort',
     ];
 
     protected $casts = [
-        'order' => 'integer',
+        'sort' => 'integer',
     ];
 
     public function article()

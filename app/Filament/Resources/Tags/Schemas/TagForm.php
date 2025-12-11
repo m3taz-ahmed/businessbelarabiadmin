@@ -51,6 +51,7 @@ class TagForm
                                     ->label('Tag Name'),
                             ])
                             ->defaultItems(1)
+                            ->columnSpan('full')
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),

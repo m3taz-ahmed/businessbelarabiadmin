@@ -44,6 +44,7 @@ class AuthorForm
                                     ->label('Biography'),
                             ])
                             ->defaultItems(1)
+                            ->columnSpan('full')
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),

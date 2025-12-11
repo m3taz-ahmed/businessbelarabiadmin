@@ -23,6 +23,7 @@ class Article extends Model
         'uuid',
         'cover_image',
         'main_image',
+        'content', // Added content field
     ];
 
     protected $casts = [
@@ -31,6 +32,7 @@ class Article extends Model
         'is_slider' => 'boolean',
         'sort' => 'integer',
         'schedule_publish_date' => 'datetime',
+        'content' => 'array', // Cast content as array
     ];
 
     public function scopeNotDeleted($query)
@@ -133,5 +135,54 @@ class Article extends Model
     public function isSavedByUser($userId): bool
     {
         return $this->saveds()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Get the article content, either from the content field or from article_sections
+     */
+    public function getContentAttribute($value)
+    {
+        // If content field has data, return it
+        if (!is_null($value)) {
+            return json_decode($value, true);
+        }
+
+        // If content field is empty, get data from article_sections
+        $sections = $this->sections()->orderBy('sort')->get();
+        
+        if ($sections->isEmpty()) {
+            return [];
+        }
+
+        $content = [];
+        foreach ($sections as $section) {
+            $type = $section->section_name;
+            $data = json_decode($section->content, true);
+
+            // Map legacy types to new Builder types
+            if ($type === 'paragraph') {
+                $type = 'paragraph_text';
+            }
+
+            // Fix 'images' block structure: wrap list of items into 'images' key for Repeater
+            if ($type === 'images' && is_array($data) && isset($data[0])) {
+                $data = ['images' => $data];
+            }
+
+            $content[] = [
+                'type' => $type,
+                'data' => $data,
+            ];
+        }
+
+        return $content;
+    }
+
+    /**
+     * Set the article content and save it to the content field
+     */
+    public function setContentAttribute($value)
+    {
+        $this->attributes['content'] = is_array($value) ? json_encode($value) : $value;
     }
 }
