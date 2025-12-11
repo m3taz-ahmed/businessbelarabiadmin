@@ -18,7 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Models\Admin;
-use App\Http\Middleware\PanelDebugMiddleware;
+// use App\Http\Middleware\PanelDebugMiddleware;
 
 // Import all resources
 use App\Filament\Resources\Admins\AdminResource;
@@ -87,7 +87,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                PanelDebugMiddleware::class,
+                // PanelDebugMiddleware::class,
             ])
             ->plugins([
                 FilamentShieldPlugin::make()

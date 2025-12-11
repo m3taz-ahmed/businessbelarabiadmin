@@ -33,7 +33,16 @@ class PodcastsTable
 
                 TextColumn::make('duration')
                     ->label('Duration')
-                    ->formatStateUsing(fn ($state) => gmdate('H:i:s', $state ?? 0)),
+                    ->formatStateUsing(function ($state) {
+                        // Convert seconds to HH:MM:SS format for display
+                        if (is_numeric($state) && $state > 0) {
+                            $hours = floor($state / 3600);
+                            $minutes = floor(($state % 3600) / 60);
+                            $seconds = $state % 60;
+                            return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+                        }
+                        return $state ?? '00:00:00';
+                    }),
 
                 IconColumn::make('is_active')
                     ->boolean()

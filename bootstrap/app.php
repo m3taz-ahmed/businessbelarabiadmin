@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Append lightweight debug logging for spinner investigation.
-        $middleware->append(\App\Http\Middleware\PanelDebugMiddleware::class);
+        // $middleware->append(\App\Http\Middleware\PanelDebugMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
