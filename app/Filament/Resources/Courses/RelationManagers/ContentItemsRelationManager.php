@@ -39,12 +39,30 @@ class ContentItemsRelationManager extends RelationManager
                             ->types([
                                 MorphToSelect\Type::make(Article::class)
                                     ->titleAttribute('uuid')
-                                    ->modifyOptionsQueryUsing(fn ($query) => $query->with(['trans' => fn ($q) => $q->where('local', 2)]))
+                                    ->modifyOptionsQueryUsing(function ($query) {
+                                        // Exclude articles that are already added to this course
+                                        $existingContentIds = static::getOwnerRecord()->contentItems()
+                                            ->where('content_type', Article::class)
+                                            ->pluck('content_id')
+                                            ->toArray();
+                                        
+                                        return $query->with(['trans' => fn ($q) => $q->where('local', 2)])
+                                            ->whereNotIn('id', $existingContentIds);
+                                    })
                                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->where('local', 2)->first()?->name ?? $record->trans->first()?->name ?? 'Untitled Article')
                                     ->label('Article'),
                                 MorphToSelect\Type::make(Podcast::class)
                                     ->titleAttribute('uuid')
-                                    ->modifyOptionsQueryUsing(fn ($query) => $query->with(['trans' => fn ($q) => $q->where('local', 2)]))
+                                    ->modifyOptionsQueryUsing(function ($query) {
+                                        // Exclude podcasts that are already added to this course
+                                        $existingContentIds = static::getOwnerRecord()->contentItems()
+                                            ->where('content_type', Podcast::class)
+                                            ->pluck('content_id')
+                                            ->toArray();
+                                        
+                                        return $query->with(['trans' => fn ($q) => $q->where('local', 2)])
+                                            ->whereNotIn('id', $existingContentIds);
+                                    })
                                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->where('local', 2)->first()?->name ?? $record->trans->first()?->name ?? 'Untitled Podcast')
                                     ->label('Podcast'),
                             ])
@@ -55,6 +73,7 @@ class ContentItemsRelationManager extends RelationManager
                         TextInput::make('sort_order')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             ->label('Sort Order')
                             ->helperText('Lower numbers appear first'),
                     ])
@@ -73,7 +92,13 @@ class ContentItemsRelationManager extends RelationManager
 
                 TextColumn::make('content_type')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => $state)
+                    ->formatStateUsing(function (string $state): string {
+                        return match ($state) {
+                            'App\\Models\\Article' => 'Article',
+                            'App\\Models\\Podcast' => 'Podcast',
+                            default => class_basename($state),
+                        };
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'App\\Models\\Article' => 'success',
                         'App\\Models\\Podcast' => 'warning',
@@ -142,8 +167,8 @@ class ContentItemsRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('content_type')
                     ->options([
-                        Article::class => 'Article',
-                        Podcast::class => 'Podcast',
+                        'App\\Models\\Article' => 'Article',
+                        'App\\Models\\Podcast' => 'Podcast',
                     ])
                     ->label('Content Type'),
 

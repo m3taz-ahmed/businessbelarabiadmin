@@ -41,6 +41,7 @@ class RequirementsRelationManager extends RelationManager
                         TextInput::make('order')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             ->label('Display Order')
                             ->helperText('Lower numbers appear first'),
                     ])

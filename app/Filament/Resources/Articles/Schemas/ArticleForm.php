@@ -61,6 +61,7 @@ class ArticleForm
                         TextInput::make('sort')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             /** @var \Filament\Forms\Components\TextInput $textInput */
                             ->label('Sort Order'),
 

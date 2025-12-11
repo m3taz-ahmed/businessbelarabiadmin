@@ -26,6 +26,7 @@ class CategoryForm
                         TextInput::make('order')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             ->label('Display Order'),
 
                         Toggle::make('is_active')

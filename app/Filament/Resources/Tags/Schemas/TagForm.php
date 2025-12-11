@@ -20,6 +20,7 @@ class TagForm
                         TextInput::make('sort')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             ->label('Sort Order'),
 
                         Toggle::make('is_active')

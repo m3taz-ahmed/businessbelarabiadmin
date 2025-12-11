@@ -26,6 +26,7 @@ class CourseForm
                         TextInput::make('order')
                             ->numeric()
                             ->default(0)
+                            ->minValue(0)
                             ->label('Sort Order'),
 
                         Select::make('level')
@@ -38,6 +39,8 @@ class CourseForm
 
                         TextInput::make('minutes')
                             ->numeric()
+                            ->step(1)
+                            ->minValue(0)
                             ->label('Total Duration (minutes)'),
                     ])
                     ->columns(2),
@@ -60,6 +63,7 @@ class CourseForm
                             ->relationship('category', 'id', fn ($query) => $query->with('trans'))
                             ->preload()
                             ->searchable()
+                            ->required()
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             ->label('Category'),
                     ]),

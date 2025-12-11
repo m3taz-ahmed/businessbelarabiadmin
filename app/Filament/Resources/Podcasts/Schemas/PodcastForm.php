@@ -80,6 +80,7 @@ class PodcastForm
                             ->multiple()
                             ->preload()
                             ->searchable()
+                            ->required()
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->first()?->name ?? 'N/A')
                             ->label('Categories'),
                     ]),
