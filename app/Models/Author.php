@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class Author extends Model
 {
@@ -13,6 +14,27 @@ class Author extends Model
     protected $fillable = [
         'avatar',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Author $author) {
+            // Ensure at least one translation exists
+            if ($author->trans->count() === 0) {
+                throw ValidationException::withMessages([
+                    'trans' => 'At least one translation is required.',
+                ]);
+            }
+            
+            // Ensure each translation has a name
+            foreach ($author->trans as $translation) {
+                if (empty($translation->name)) {
+                    throw ValidationException::withMessages([
+                        'trans' => 'Each translation must have a name.',
+                    ]);
+                }
+            }
+        });
+    }
 
     protected function getAvatarAttribute($value): ?string
     {

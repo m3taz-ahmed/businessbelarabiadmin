@@ -8,6 +8,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Fieldset;
+use Illuminate\Validation\Rule;
 
 class TagForm
 {
@@ -32,7 +33,8 @@ class TagForm
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->trans->where('local', 2)->first()?->name ?? $record->trans->first()?->name ?? 'Unnamed Category')
                             ->searchable()
                             ->preload()
-                            ->label('Category (Optional)'),
+                            ->required()
+                            ->label('Category'),
                     ]),
 
                 Fieldset::make('Translations')
@@ -53,7 +55,9 @@ class TagForm
                             ->defaultItems(1)
                             ->columnSpan('full')
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                            ->minItems(1)
+                            ->required(),
                     ]),
             ]);
     }

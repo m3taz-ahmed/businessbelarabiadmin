@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
+use Illuminate\Validation\Rule;
 
 /**
  * Article form schema configuration.
@@ -285,7 +286,9 @@ class ArticleForm
                             ->defaultItems(1)
                             ->columnSpan('full')
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                            ->minItems(1)
+                            ->required(),
                     ]),
             ]);
     }

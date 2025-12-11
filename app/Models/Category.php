@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class Category extends Model
 {
@@ -25,6 +26,27 @@ class Category extends Model
         'show_in_tab' => 'boolean',
         'order' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Category $category) {
+            // Ensure at least one translation exists
+            if ($category->trans->count() === 0) {
+                throw ValidationException::withMessages([
+                    'trans' => 'At least one translation is required.',
+                ]);
+            }
+            
+            // Ensure each translation has a name
+            foreach ($category->trans as $translation) {
+                if (empty($translation->name)) {
+                    throw ValidationException::withMessages([
+                        'trans' => 'Each translation must have a name.',
+                    ]);
+                }
+            }
+        });
+    }
 
     protected function getImageAttribute($value): ?string
     {

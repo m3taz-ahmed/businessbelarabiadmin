@@ -10,6 +10,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Fieldset;
+use Illuminate\Validation\Rule;
 
 class PodcastForm
 {
@@ -108,7 +109,9 @@ class PodcastForm
                             ->defaultItems(1)
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->minItems(1)
+                            ->required(),
                     ]),
             ]);
     }

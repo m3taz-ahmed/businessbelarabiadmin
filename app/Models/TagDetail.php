@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class TagDetail extends Model
 {
@@ -16,6 +17,18 @@ class TagDetail extends Model
         'tags_id',
         'local',
     ];
+    
+    protected static function booted()
+    {
+        static::saving(function (TagDetail $tagDetail) {
+            // Ensure name is not empty
+            if (empty($tagDetail->name)) {
+                throw ValidationException::withMessages([
+                    'name' => 'The name field is required.',
+                ]);
+            }
+        });
+    }
 
     public function tag()
     {

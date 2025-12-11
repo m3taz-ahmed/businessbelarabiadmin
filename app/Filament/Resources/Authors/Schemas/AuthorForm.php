@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Fieldset;
+use Illuminate\Validation\Rule;
 
 class AuthorForm
 {
@@ -46,7 +47,9 @@ class AuthorForm
                             ->defaultItems(1)
                             ->columnSpan('full')
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                            ->minItems(1)
+                            ->required(),
                     ]),
             ]);
     }

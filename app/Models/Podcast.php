@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class Podcast extends Model
 {
@@ -41,6 +42,27 @@ class Podcast extends Model
         'duration' => 'integer',
         'total_plays' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Podcast $podcast) {
+            // Ensure at least one translation exists
+            if ($podcast->trans->count() === 0) {
+                throw ValidationException::withMessages([
+                    'trans' => 'At least one translation is required.',
+                ]);
+            }
+            
+            // Ensure each translation has a name
+            foreach ($podcast->trans as $translation) {
+                if (empty($translation->name)) {
+                    throw ValidationException::withMessages([
+                        'trans' => 'Each translation must have a name.',
+                    ]);
+                }
+            }
+        });
+    }
 
     /**
      * Get the URL for the podcast's cover image.
@@ -152,8 +174,10 @@ class Podcast extends Model
         return $query->whereNull('deleted_at');
     }
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
+
         static::addGlobalScope('defaultOrder', function (Builder $builder) {
             $builder->orderBy('scheduled_date_time', 'desc');
         });

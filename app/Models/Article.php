@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\ValidationException;
 
 class Article extends Model
 {
@@ -35,13 +36,36 @@ class Article extends Model
         'content' => 'array', // Cast content as array
     ];
 
+    protected static function booted()
+    {
+        static::saving(function (Article $article) {
+            // Ensure at least one translation exists
+            if ($article->trans->count() === 0) {
+                throw ValidationException::withMessages([
+                    'trans' => 'At least one translation is required.',
+                ]);
+            }
+            
+            // Ensure each translation has a name
+            foreach ($article->trans as $translation) {
+                if (empty($translation->name)) {
+                    throw ValidationException::withMessages([
+                        'trans' => 'Each translation must have a name.',
+                    ]);
+                }
+            }
+        });
+    }
+
     public function scopeNotDeleted($query)
     {
         return $query->whereNull('deleted_at');
     }
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
+
         static::addGlobalScope('defaultOrder', function (Builder $builder) {
             $builder->orderBy('schedule_publish_date', 'desc');
         });

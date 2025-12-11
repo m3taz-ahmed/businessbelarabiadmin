@@ -9,6 +9,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Fieldset;
+use Illuminate\Validation\Rule;
 
 class CategoryForm
 {
@@ -64,7 +65,9 @@ class CategoryForm
                             ->defaultItems(1)
                             ->columnSpan('full')
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                            ->minItems(1)
+                            ->required(),
                     ]),
             ]);
     }

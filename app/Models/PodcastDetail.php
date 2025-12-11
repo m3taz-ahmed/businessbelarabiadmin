@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class PodcastDetail extends Model
 {
@@ -15,6 +16,18 @@ class PodcastDetail extends Model
         'podcast_id',
         'local',
     ];
+    
+    protected static function booted()
+    {
+        static::saving(function (PodcastDetail $podcastDetail) {
+            // Ensure name is not empty
+            if (empty($podcastDetail->name)) {
+                throw ValidationException::withMessages([
+                    'name' => 'The name field is required.',
+                ]);
+            }
+        });
+    }
 
     public function podcast()
     {
