@@ -53,9 +53,6 @@ class UsersTable
                     })
                     ->label('Gender'),
 
-                TextColumn::make('city')
-                    ->label('City'),
-
                 IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),
@@ -83,9 +80,6 @@ class UsersTable
                         'male' => 'Male',
                         'female' => 'Female',
                     ]),
-
-                SelectFilter::make('city')
-                    ->label('City'),
 
                 Filter::make('registration_date')
                     ->form([

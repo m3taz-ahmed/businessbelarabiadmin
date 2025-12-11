@@ -144,11 +144,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Category::class, 'user_categories_interests', 'user_id', 'category_id');
     }
 
-    public function cityRelation()
-    {
-        return $this->belongsTo(City::class, 'city', 'id');
-    }
-
     public function language()
     {
         return $this->belongsTo(Language::class, 'language_id', 'id');

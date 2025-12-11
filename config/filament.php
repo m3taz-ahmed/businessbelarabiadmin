@@ -84,7 +84,7 @@ return [
     |
     */
 
-    'livewire_loading_delay' => 'none',
+    'livewire_loading_delay' => 'default',
 
     /*
     |--------------------------------------------------------------------------
@@ -116,5 +116,11 @@ return [
     */
 
     'system_route_prefix' => 'filament',
+
+    'pages' => [
+        'global_search' => [
+            'field' => 'global',
+        ],
+    ],
 
 ];

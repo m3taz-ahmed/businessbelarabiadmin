@@ -61,10 +61,6 @@ class UserForm
                         DatePicker::make('birthdate')
                             ->label('Birth Date'),
 
-                        TextInput::make('city')
-                            ->maxLength(100)
-                            ->label('City'),
-
                         Select::make('language_id')
                             ->relationship('language', 'name')
                             ->searchable()

@@ -11,7 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Append lightweight debug logging for spinner investigation.
+        $middleware->append(\App\Http\Middleware\PanelDebugMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

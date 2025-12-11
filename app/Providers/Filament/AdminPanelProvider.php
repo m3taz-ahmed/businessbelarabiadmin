@@ -18,13 +18,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Models\Admin;
+use App\Http\Middleware\PanelDebugMiddleware;
 
 // Import all resources
 use App\Filament\Resources\Admins\AdminResource;
 use App\Filament\Resources\Articles\ArticleResource;
 use App\Filament\Resources\Authors\AuthorResource;
 use App\Filament\Resources\Categories\CategoryResource;
-use App\Filament\Resources\Cities\CityResource;
 use App\Filament\Resources\ContactUs\ContactUsResource;
 use App\Filament\Resources\Courses\CourseResource;
 use App\Filament\Resources\Faqs\FaqResource;
@@ -40,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        \Illuminate\Support\Facades\Log::info('AdminPanelProvider: Registering admin panel');
         return $panel
             ->default()
             ->id('admin')
@@ -56,7 +57,6 @@ class AdminPanelProvider extends PanelProvider
                 ArticleResource::class,
                 AuthorResource::class,
                 CategoryResource::class,
-                CityResource::class,
                 ContactUsResource::class,
                 CourseResource::class,
                 FaqResource::class,
@@ -68,7 +68,8 @@ class AdminPanelProvider extends PanelProvider
                 TagResource::class,
                 UserResource::class,
             ])
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            // Disabled discoverPages() - the Filament/Pages directory contains empty files
+            // ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
@@ -86,6 +87,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                PanelDebugMiddleware::class,
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
@@ -120,6 +122,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.end',
                 fn () => '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '">'
+            )
+            ->renderHook(
+                'panels::body.end',
+                fn () => view('filament.debug-logger')
             );
     }
 }
