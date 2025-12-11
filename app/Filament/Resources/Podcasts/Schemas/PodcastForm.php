@@ -10,8 +10,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Forms\Components\TextInput\Mask;
-use Filament\Support\RawJs;
 
 class PodcastForm
 {
@@ -42,35 +40,24 @@ class PodcastForm
 
                         TextInput::make('duration')
                             ->numeric()
-                            ->label('Duration (seconds)')
-                            ->mask(RawJs::make(<<<'JS'
-                                /^\d+:\d{2}:\d{2}$/
-                            JS))
-                            ->hint('Format: HH:MM:SS')
-                            ->helperText('Enter duration in hours:minutes:seconds format or seconds only')
-                            ->rule('regex:/^(\d+:)?([0-5]?[0-9]):([0-5][0-9])$|^(\d+)$/')
+                            ->label('Duration (minutes)')
+                            ->helperText('Enter duration in minutes (will be stored as seconds)')
+                            ->minValue(0)
+                            ->step(1)
                             ->beforeStateDehydrated(function (TextInput $component, $state) {
-                                // Convert HH:MM:SS format to seconds
-                                if (preg_match('/^(\d+):([0-5]?[0-9]):([0-5][0-9])$/', $state, $matches)) {
-                                    $hours = (int)$matches[1];
-                                    $minutes = (int)$matches[2];
-                                    $seconds = (int)$matches[3];
-                                    $component->state(($hours * 3600) + ($minutes * 60) + $seconds);
-                                } 
-                                // If already in seconds format, keep as is
-                                elseif (is_numeric($state)) {
-                                    $component->state((int)$state);
+                                // Convert minutes to seconds for storage
+                                if (is_numeric($state) && $state >= 0) {
+                                    $component->state((int)$state * 60);
+                                } else {
+                                    $component->state(0);
                                 }
                             })
                             ->formatStateUsing(function ($state) {
-                                // Convert seconds to HH:MM:SS format for display
+                                // Convert seconds to minutes for display
                                 if (is_numeric($state) && $state > 0) {
-                                    $hours = floor($state / 3600);
-                                    $minutes = floor(($state % 3600) / 60);
-                                    $seconds = $state % 60;
-                                    return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+                                    return floor($state / 60);
                                 }
-                                return $state;
+                                return 0;
                             }),
                     ])
                     ->columns(2),
@@ -115,6 +102,7 @@ class PodcastForm
 
                                 Textarea::make('desc')
                                     ->rows(3)
+                                    ->required()
                                     ->label('Description'),
                             ])
                             ->defaultItems(1)

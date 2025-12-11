@@ -32,16 +32,13 @@ class PodcastsTable
                     ->default('Untitled'),
 
                 TextColumn::make('duration')
-                    ->label('Duration')
+                    ->label('Duration (minutes)')
                     ->formatStateUsing(function ($state) {
-                        // Convert seconds to HH:MM:SS format for display
+                        // Convert seconds to minutes for display
                         if (is_numeric($state) && $state > 0) {
-                            $hours = floor($state / 3600);
-                            $minutes = floor(($state % 3600) / 60);
-                            $seconds = $state % 60;
-                            return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+                            return floor($state / 60) . ' min';
                         }
-                        return $state ?? '00:00:00';
+                        return '0 min';
                     }),
 
                 IconColumn::make('is_active')
